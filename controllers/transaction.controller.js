@@ -1,3 +1,5 @@
+import Transaction from "../models/transaction.schema.js";
+
 const addTransaction = async (req, res) => {
   try {
     const { type, title, date, amount, category } = req.body;
