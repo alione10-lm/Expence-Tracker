@@ -1,13 +1,14 @@
+// External Modules
 import express from "express";
 import dotenv from "dotenv";
 
+// Internal Modules
 import connectDB from "./config/db.js";
-
 import transactionRoutes from "./routes/transaction.router.js";
 
-dotenv.config();
-
 const PORT = process.env.PORT || 5000;
+
+dotenv.config();
 
 connectDB();
 
