@@ -1,6 +1,6 @@
 import Transaction from "../models/transaction.schema.js";
 
-export const addTransaction = async (req, res) => {
+const addTransaction = async (req, res) => {
     try {
         const { type, title, date, amount, category } = req.body;
 
@@ -22,3 +22,19 @@ export const addTransaction = async (req, res) => {
         res.status(400).json("failed to create transaction !");
     }
 };
+
+const getTransactions = async (req, res) => {
+    try {
+        const transactions = await Transaction.find({});
+        res.status(200).json({
+            success: true,
+            data: transactions,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "failed to load transactions !",
+        });
+    }
+};
+
+export { addTransaction, getTransactions };

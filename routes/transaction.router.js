@@ -1,23 +1,18 @@
-
 //post transaction
 
 import express from "express";
+import { getTransactions } from "../controllers/transaction.controller.js";
 
+const router = express.Router();
 
-const router =express.Router();
-
-
-router.post("/transactions" )
-
-
+router.get("/transactions", getTransactions);
 
 //get transaction
 
-router.get("/transactions")
-
+// router.get("/transactions")
 
 //get status
 
-router.get("/transactions/status")
+// router.get("/transactions/status")
 
 export default router;
