@@ -3,6 +3,7 @@
 import express from "express";
 import {
     addTransaction,
+    calculateBalance,
     getTransactions,
 } from "../controllers/transaction.controller.js";
 
@@ -14,7 +15,8 @@ router.get("/transactions", getTransactions);
 // add transaction
 router.post("/transactions", addTransaction);
 
-//get status
+//get balance
+router.get("/transactions/balance", calculateBalance);
 
 // router.get("/transactions/status")
 
