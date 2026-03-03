@@ -15,6 +15,8 @@ const app = express();
 
 app.use(express.json());
 
+// GET -->  localhost:5000/api/transactions
+// POST -->  localhost:5000/api/transactions
 app.use("/api", transactionRoutes);
 
 app.listen(PORT, () => {
