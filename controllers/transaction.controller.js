@@ -52,7 +52,11 @@ const getTransactions = async (req, res) => {
             if (maxAmount) query.amount.$lte = Number(maxAmount);
         }
 
-        const transactions = await Transaction.find(query);
+        const skip = (page - 1) * limit;
+
+        const transactions = await Transaction.find(query)
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             success: true,
