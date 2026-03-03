@@ -19,7 +19,9 @@ const TransactionSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            required: () => this.type === "expense",
+            required: function () {
+                return this.type === "expense";
+            },
         },
         date: Date,
     },
