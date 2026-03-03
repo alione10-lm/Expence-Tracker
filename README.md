@@ -43,7 +43,7 @@ npm install
 ### Copy the example file
 
 ```bash
-cp .env.example .env
+copy .env.example .env
 ```
 
 ### Update your `.env` file
