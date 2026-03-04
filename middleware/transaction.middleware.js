@@ -1,4 +1,5 @@
 import { body, validationResult } from "express-validator";
+import Transaction from "../models/transaction.schema.js";
 
 export const transactionsValidationRules = [
     body("title").notEmpty().withMessage("The transaction title is required"),
@@ -28,4 +29,39 @@ export const transactionValidator = (req, res, next) => {
     }
 
     next();
+};
+
+export const balanceCheck = async (req, res, next) => {
+    try {
+        const incomes = await Transaction.aggregate([
+            { $match: { type: "income" } },
+            {
+                $group: {
+                    _id: null,
+                    totalSum: { $sum: "$amount" },
+                },
+            },
+        ]);
+        const expenses = await Transaction.aggregate([
+            { $match: { type: "expense" } },
+            {
+                $group: {
+                    _id: null,
+                    totalSum: { $sum: "$amount" },
+                },
+            },
+        ]);
+
+        if (incomes[0].totalSum - expenses[0].totalSum < 0) {
+            res.status(400).json({
+                error: "The transaction cannot be processed because the balance will become negative",
+            });
+        } else {
+            next();
+        }
+    } catch (e) {
+        return res
+            .status(500)
+            .json({ error: "An internal error occured, try again!" });
+    }
 };

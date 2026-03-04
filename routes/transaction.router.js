@@ -10,6 +10,7 @@ import {
 import {
     transactionsValidationRules,
     transactionValidator,
+    balanceCheck,
 } from "../middleware/transaction.middleware.js";
 
 //post transaction
@@ -24,6 +25,7 @@ router.post(
     "/transactions",
     transactionsValidationRules,
     transactionValidator,
+    balanceCheck,
     addTransaction
 );
 
