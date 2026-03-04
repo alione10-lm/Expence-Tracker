@@ -5,7 +5,7 @@ export const transactionsValidationRules = [
     body("amount")
         .notEmpty()
         .withMessage("The transaction amount is required")
-        .isLength({ min: 1 })
+        .isInt({ min: 1 })
         .withMessage("The transaction amount must greater than '0'"),
     body("type")
         .notEmpty()
