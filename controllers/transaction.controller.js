@@ -25,7 +25,39 @@ const addTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     try {
-        const transactions = await Transaction.find({});
+        let {
+            page = 1,
+            limit = 10,
+            type,
+            category,
+            maxAmount,
+            minAmount,
+        } = req.query;
+
+        limit = Number(limit);
+        page = Number(page);
+
+        let query = {};
+
+        if (type) {
+            query.type = type;
+        }
+        if (category) {
+            query.category = category;
+        }
+
+        if (minAmount || maxAmount) {
+            query.amount = {};
+            if (minAmount) query.amount.$gte = Number(minAmount);
+            if (maxAmount) query.amount.$lte = Number(maxAmount);
+        }
+
+        const skip = (page - 1) * limit;
+
+        const transactions = await Transaction.find(query)
+            .skip(skip)
+            .limit(limit);
+
         res.status(200).json({
             success: true,
             data: transactions,
