@@ -5,6 +5,7 @@ import express from "express";
 import {
     addTransaction,
     calculateBalance,
+    getMonthlyStats,
     getTransactions,
 } from "../controllers/transaction.controller.js";
 import {
@@ -32,6 +33,8 @@ router.post(
 //get balance
 router.get("/transactions/balance", calculateBalance);
 
+// get stats
+router.get("/transactions/stats", getMonthlyStats);
 // router.get("/transactions/status")
 
 export default router;

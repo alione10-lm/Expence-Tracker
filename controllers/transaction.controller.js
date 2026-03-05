@@ -109,4 +109,138 @@ const calculateBalance = async (req, res) => {
     }
 };
 
-export { addTransaction, getTransactions, calculateBalance };
+// const getMonthlyStats = async (req, res) => {
+//     try {
+//         const { month, year } = req.query;
+
+//         console.log(month, year);
+//         console.log(new Date(year, month));
+
+//         const startDate = new Date(year, month - 1, 1);
+//         const endDate = new Date(year, month, 1);
+
+//         const [{ incomesTotal }] = await Transaction.aggregate([
+//             {
+//                 $match: {
+//                     type: "income",
+//                     date: { $gte: startDate, $lt: endDate },
+//                 },
+//             },
+//             {
+//                 $group: {
+//                     _id: null,
+//                     incomesTotal: {
+//                         $sum: "$amount",
+//                     },
+//                 },
+//             },
+//         ]);
+
+//         const [{ expenseTotal }] = await Transaction.aggregate([
+//             {
+//                 $match: {
+//                     date: { $gte: startDate, $lt: endDate },
+//                     type: "expense",
+//                 },
+//             },
+//             {
+//                 $group: {
+//                     _id: null,
+//                     expenseTotal: {
+//                         $sum: "$amount",
+//                     },
+//                 },
+//             },
+//         ]);
+
+//         res.status(200).json({ incomesTotal, expenseTotal });
+//     } catch (error) {
+//         res.status(500).json({
+//             message: "an error occured while getting stats !",
+//             err: error.message,
+//         });
+//     }
+// };
+
+const getMonthlyStats = async (req, res) => {
+    try {
+        const { month, year } = req.query;
+
+        const startDate = new Date(Number(year), Number(month) - 1, 1);
+        const endDate = new Date(Number(year), Number(month), 1);
+
+        const incomeResult = await Transaction.aggregate([
+            {
+                $match: {
+                    type: "income",
+                    createdAt: { $gte: startDate, $lt: endDate },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    incomesTotal: { $sum: "$amount" },
+                },
+            },
+        ]);
+
+        const incomesTotal = incomeResult[0]?.incomesTotal || 0;
+
+        const expenseResult = await Transaction.aggregate([
+            {
+                $match: {
+                    type: "expense",
+                    createdAt: { $gte: startDate, $lt: endDate },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    expenseTotal: { $sum: "$amount" },
+                },
+            },
+        ]);
+
+        const expenseTotal = expenseResult[0]?.expenseTotal || 0;
+
+        const categories = await Transaction.aggregate([
+            {
+                $match: {
+                    type: "expense",
+                    createdAt: { $gte: startDate, $lt: endDate },
+                },
+            },
+            {
+                $group: {
+                    _id: "$category",
+                    total: { $sum: "$amount" },
+                },
+            },
+        ]);
+
+        const categoriesWithPercentage = categories.map((cat) => ({
+            category: cat._id,
+            total: cat.total,
+            percentage:
+                expenseTotal > 0
+                    ? Number(((cat.total / expenseTotal) * 100).toFixed(2))
+                    : 0,
+        }));
+
+        const monthlyBalance = incomesTotal - expenseTotal;
+
+        res.status(200).json({
+            monthlyBalance,
+            incomesTotal,
+            expenseTotal,
+            categoriesWithPercentage,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "An error occurred while getting stats",
+            error: error.message,
+        });
+    }
+};
+
+export { getMonthlyStats, addTransaction, getTransactions, calculateBalance };
