@@ -32,6 +32,10 @@ export const transactionValidator = (req, res, next) => {
 };
 
 export const balanceCheck = async (req, res, next) => {
+    if (req.body.type == "income") {
+        return next();
+    }
+
     try {
         const incomes = await Transaction.aggregate([
             { $match: { type: "income" } },
