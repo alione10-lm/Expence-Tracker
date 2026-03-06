@@ -17,7 +17,7 @@ export const transactionsValidationRules = [
         .if((value, { req }) => req.body.type === "expense")
         .notEmpty()
         .withMessage(
-            "The category must specified in the expenses transactions"
+            "The category must specified in the expenses transactions",
         ),
 ];
 
@@ -56,7 +56,10 @@ export const balanceCheck = async (req, res, next) => {
             },
         ]);
 
-        if (incomes[0].totalSum - expenses[0].totalSum < 0) {
+        const incomesTotal = incomes[0]?.totalSum || 0;
+        const expenseTotal = expenses[0]?.totalSum || 0;
+
+        if (incomesTotal - expenseTotal < 0) {
             res.status(400).json({
                 error: "The transaction cannot be processed because the balance will become negative",
             });
@@ -64,6 +67,7 @@ export const balanceCheck = async (req, res, next) => {
             next();
         }
     } catch (e) {
+        console.log(e.message);
         return res
             .status(500)
             .json({ error: "An internal error occured, try again!" });
