@@ -67,17 +67,11 @@ OR use your MongoDB Atlas connection string.
 npm run dev
 ```
 
-### Production mode
-
-```bash
-npm start
-```
-
 If everything works correctly, you should see:
 
 ```
-MongoDB Connected
 Server running on port 5000
+MongoDB Connected
 ```
 
 ---
@@ -94,6 +88,5 @@ http://localhost:5000
 
 - All responses are returned in JSON format
 - Balance is calculated dynamically (not stored in database)
-- Make sure MongoDB is running before starting the server
 
 ---
